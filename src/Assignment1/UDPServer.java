@@ -1,16 +1,26 @@
 /*
  * /*
 Programmer: Kieren Foenander S012141776
-Course: Object Oriented Programming COIT11134
+Course: Applied Distributed Systems
 Assignment 1
  */
 
 package Assignment1;
 
-/**
- *
- * @author black
- */
+import java.util.ArrayList;
+
+
 public class UDPServer {
+    
+    public static int serverPort = 6789;
+    public static String textFileName = "members.txt";
+    ArrayList <Customer> customerList = new ArrayList();
+    
+    
+    public static void main (String [] args){
+        
+        
+    }
+    
 
 }

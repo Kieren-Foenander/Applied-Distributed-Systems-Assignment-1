@@ -7,8 +7,10 @@ Assignment 1
 
 package Assignment1;
 
+import java.io.Serializable;
 
-public class Customer {
+
+public class Customer implements Serializable{
     
     // instance variables of a customer
     
@@ -73,7 +75,14 @@ public class Customer {
 
     
     public void calculateCost(){
-        /* TO DO method is used to calculate the cost of the trip */
+        
+        if (numberOfTravels > 5){ // states that if the customer has passed their 5 free rides their total cost will now increase by $3.00 per ride
+            totalCost = totalCost + 3.00;
+        }else {
+            totalCost = 0.00;
+        }
+        
+       
     }
 
     @Override

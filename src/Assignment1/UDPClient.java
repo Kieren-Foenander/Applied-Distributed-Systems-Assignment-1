@@ -1,16 +1,24 @@
 /*
  * /*
 Programmer: Kieren Foenander S012141776
-Course: Object Oriented Programming COIT11134
+Course: Applied Distributed Systems
 Assignment 1
  */
 
 package Assignment1;
 
-/**
- *
- * @author black
- */
+
 public class UDPClient {
+    
+    public static int serverPort = 6789;
+    public static String serverName = "serverOne";
+    
+    
+    public static void main (String [] args){
+        
+        
+        
+        
+    }
 
 }
