@@ -44,15 +44,8 @@ public class UDPServer {
                 customerList.add(custInput); // adds new customer object to arraylist
                 
             }
-            
-            
         }
-        
         reader.close();
-        
-        
-        
-        
     }
     
     
@@ -63,14 +56,6 @@ public class UDPServer {
         readCustomers();
         
         System.out.println(customerList);
-        
-
-        
-        
-        
+ 
     }
-    
-    
-    
-
 }
