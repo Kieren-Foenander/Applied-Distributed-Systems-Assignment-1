@@ -73,7 +73,7 @@ public class Customer implements Serializable{
         return totalCost;
     }
 
-    
+    // method is used to calculate the cost that a customer owes based on the amount of trips they have taken
     public void calculateCost(){
         
         if (numberOfTravels > 5){ // states that if the customer has passed their 5 free rides their total cost will now increase by $3.00 per ride
