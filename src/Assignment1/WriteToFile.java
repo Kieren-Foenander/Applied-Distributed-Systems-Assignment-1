@@ -34,6 +34,7 @@ public class WriteToFile extends TimerTask {
             for (int i = 0; i < server.customerList.size(); i++){ // loop to add each customer to the text file
                 oos.writeObject(server.customerList.get(i));
             }
+            oos.flush();
             oos.close();
 
         }catch(IOException e){
