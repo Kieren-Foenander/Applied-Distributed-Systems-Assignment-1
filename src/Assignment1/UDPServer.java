@@ -25,6 +25,7 @@ public class UDPServer {
     public static String textFileName = "members.txt";
     public static ArrayList<Customer> customerList = new ArrayList();
     public static long interval = 120000;
+    
 
     public static void readCustomers() throws FileNotFoundException, IOException {
 
@@ -53,6 +54,7 @@ public class UDPServer {
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
         readCustomers(); // loads customer text file
+        
         String response = "";
         String user = "";
         int pin;
@@ -60,6 +62,10 @@ public class UDPServer {
         String menuResponse = "****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ";
         boolean optionOneActive = false;
         boolean optionTwoActive = false;
+        boolean found = false;
+        
+        //decalring variables required
+        
         
         
         
@@ -68,59 +74,95 @@ public class UDPServer {
 
         timer.schedule(wtf, interval, interval); // schedules a write to file action after 2 minutes of the program running and every 2 minutes after
 
-        DatagramSocket socketA = null;
+        DatagramSocket socketA = null; // creates new instance of a socket
         try {
-            socketA = new DatagramSocket(serverPort);
+            socketA = new DatagramSocket(serverPort); // creates new socket
 
-            byte[] buffer = new byte[1000];
+            byte[] buffer = new byte[1000]; // creates new byte array to buffer incoming messages
             System.out.println("server started");
 
-            while (true) {
-                DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-                socketA.receive(request);
-                String str = new String(request.getData(), 0, request.getLength());
-                System.out.println("Client Request: " + new String(request.getData(), 0, request.getLength()));
-               
-                if (str.equalsIgnoreCase("1")){
+            while (true) { // loop to keep server running after each command
+                
+                DatagramPacket request = new DatagramPacket(buffer, buffer.length); // new packet that reads packet sent from client
+                socketA.receive(request); // recieves packet
+                String str = new String(request.getData(), 0, request.getLength()); // creates new string from recieved paclet
+                System.out.println("Client Request: " + new String(request.getData(), 0, request.getLength())); // server reads string to command line
+                for (int i = 0; i < customerList.size(); i++){ // loop to display users infomation
+                    System.out.println(customerList.get(i).toString());
+                }
+                
+                if (str.equalsIgnoreCase("1")){ // reads response from client and responds accordingly
                     response = "Enter Client Id";
                     optionOneActive = true;
                     
-                }else if (str.equalsIgnoreCase("2")){
+                } else if (str.equalsIgnoreCase("2")) {
                     response = "Enter Client Id";
                     optionTwoActive = true;
-                    
-                }else if(str.equalsIgnoreCase("3")){
+
+                } else if (str.equalsIgnoreCase("3")) {
                     response = "exit";
                 }
-                
-                for (int i = 0; i < customerList.size(); i++){
-                        if (str.equalsIgnoreCase(customerList.get(i).getClientId())){
-                            response = "Enter Client Pin";
-                            user = customerList.get(i).getClientId();
-                            userNum = i; 
-                            
-                            if (i == customerList.size()){
-                                response = "Invalid Customer";
-                            }
-                        } 
-                            
-                        
-                }
-                if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
-                    pin = Integer.parseInt(str);
 
-                    if (optionOneActive == true) {
-                        signIn(user, pin);
-                        response = "Success Welcome" + menuResponse;
-                        optionOneActive = false;
-                    } else if (optionTwoActive == true) {
-                        signOut(user, pin);
-                        response = "Success Goodbye" + menuResponse;
-                        optionTwoActive = false;
+                if (optionOneActive == true) { // commands to run if otion one is selected
+                    
+                    for (int i = 0; i < customerList.size(); i++) { // loop to check through each client id number to see if the id number matches
+                        if (str.equalsIgnoreCase(customerList.get(i).getClientId())) {
+                            response = "Enter Client Pin"; // gives prompt for next section
+                            user = customerList.get(i).getClientId(); // makes user variable the client id that is found
+                            userNum = i; // gives specific user num to identify same user later
+                            found = true;
 
+                        }
                     }
 
+                    if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
+                        pin = Integer.parseInt(str); // sets pin variable to be able to use with sign in method
+
+                        if (customerList.get(userNum).isStatus() == true) { // ensures that if client is already signed in thye cannot be signed in again
+                            response = "Error Already Signed In";
+
+                        } else { 
+
+                            signIn(user, pin);// signs client in
+                            response = "Success Welcome\n" + menuResponse; // gives success repsponse and goes back to main menu
+                            optionOneActive = false; // resets options so can be reactivated when nesecary
+                        }
+                        /*else if (optionTwoActive == true) {
+                            signOut(user, pin);
+                            response = "Success Goodbye\n" + menuResponse;
+                            optionTwoActive = false;
+
+                        }*/
+
+                    }
+                } 
+                if (optionTwoActive == true) { // commands to run if otion Two is selected
+                    
+                    for (int i = 0; i < customerList.size(); i++) { // loop to check through each client id number to see if the id number matches
+                        if (str.equalsIgnoreCase(customerList.get(i).getClientId())) {
+                            response = "Enter Client Pin"; // gives prompt for next section
+                            user = customerList.get(i).getClientId(); // makes user variable the client id that is found
+                            userNum = i; // gives specific user num to identify same user later
+                            found = true;
+
+                        }
+                    }
+
+                    if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
+                        pin = Integer.parseInt(str); // sets pin variable to be able to use with sign out method
+
+                        if (customerList.get(userNum).isStatus() == false) { // ensures that if client is already signed out thye cannot be signed in again
+                            response = "Error Already Signed Out";
+
+                        } else { 
+
+                            signOut(user, pin);// signs client out
+                            response = "Success Goodbye\n" + menuResponse; // gives success repsponse and goes back to main menu
+                            optionTwoActive = false; // resets options so can be reactivated when nesecary
+                        }
+                    }
                 }
+
  
                     byte[] b = response.getBytes();
                     DatagramPacket reply = new DatagramPacket(b, response.length(), request.getAddress(), request.getPort());
@@ -164,4 +206,5 @@ public class UDPServer {
             }
         }
     }
+
 }

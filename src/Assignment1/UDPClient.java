@@ -51,6 +51,7 @@ public class UDPClient {
                 DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
                 socketA.receive(reply);
                 
+                //if user types exit system will terminate
                 if (new String (reply.getData(), 0, reply.getLength()).equalsIgnoreCase("exit")){
                     System.out.println("exit System");
                     break;
@@ -63,8 +64,10 @@ public class UDPClient {
             
         }
         catch(SocketException e){
+            e.printStackTrace();
             
         }catch(IOException e){
+            e.printStackTrace();
         
         }
         finally{
