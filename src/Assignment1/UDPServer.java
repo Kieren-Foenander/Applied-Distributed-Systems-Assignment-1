@@ -67,6 +67,7 @@ public class UDPServer {
         boolean optionOneActive = false;
         boolean optionTwoActive = false;
         boolean found = true;
+        boolean exists = true;
         
         //decalring variables required
         
@@ -112,8 +113,8 @@ public class UDPServer {
                             user = customerList.get(i).getClientId(); // makes user variable the client id that is found
                             userNum = i; // gives specific user num to identify same user later
                             found = true;
-
-                        }
+                            
+                        }                     
                     }
 
                     if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
