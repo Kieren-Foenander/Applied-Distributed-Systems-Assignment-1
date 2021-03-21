@@ -78,8 +78,6 @@ public class Customer implements Serializable{
         
         if (numberOfTravels > 5){ // states that if the customer has passed their 5 free rides their total cost will now increase by $3.00 per ride
             totalCost = totalCost + 3.00;
-        }else {
-            totalCost = 0.00;
         }
         
        
@@ -87,7 +85,7 @@ public class Customer implements Serializable{
 
     @Override
     public String toString() {
-        return clientId + pinNumber + status +  numberOfTravels + totalCost;
+        return clientId + " " + pinNumber + " " + status + " " +  numberOfTravels + " " + totalCost;
     }
     
 

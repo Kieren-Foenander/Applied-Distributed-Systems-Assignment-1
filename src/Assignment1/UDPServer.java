@@ -126,16 +126,14 @@ public class UDPServer {
                             signIn(user, pin);// signs client in
                             response = "Success Welcome\n" + menuResponse; // gives success repsponse and goes back to main menu
                             optionOneActive = false; // resets options so can be reactivated when nesecary
+                            if (customerList.get(userNum).getNumberOfTravels() > 5){
+                                customerList.get(userNum).calculateCost();
+                            }
+                                
                         }
-                        /*else if (optionTwoActive == true) {
-                            signOut(user, pin);
-                            response = "Success Goodbye\n" + menuResponse;
-                            optionTwoActive = false;
-
-                        }*/
-
                     }
                 } 
+                
                 if (optionTwoActive == true) { // commands to run if otion Two is selected
                     
                     for (int i = 0; i < customerList.size(); i++) { // loop to check through each client id number to see if the id number matches
