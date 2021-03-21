@@ -87,7 +87,7 @@ public class Customer implements Serializable{
 
     @Override
     public String toString() {
-        return "Customer{" + "clientId=" + clientId + ", pinNumber=" + pinNumber + ", status=" + status + ", numberOfTravels=" + numberOfTravels + ", totalCost=" + totalCost + '}';
+        return clientId + pinNumber + status +  numberOfTravels + totalCost;
     }
     
 
