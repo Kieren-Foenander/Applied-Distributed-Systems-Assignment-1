@@ -26,6 +26,9 @@ public class UDPServer {
     public static ArrayList<Customer> customerList = new ArrayList();
     public static long interval = 120000;
     
+    //creating instance variables
+  
+    
 
     public static void readCustomers() throws FileNotFoundException, IOException {
 
@@ -62,7 +65,7 @@ public class UDPServer {
         String menuResponse = "****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ";
         boolean optionOneActive = false;
         boolean optionTwoActive = false;
-        boolean found = false;
+        boolean found = true;
         
         //decalring variables required
         
@@ -82,19 +85,16 @@ public class UDPServer {
             System.out.println("server started");
 
             while (true) { // loop to keep server running after each command
-                
+
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length); // new packet that reads packet sent from client
                 socketA.receive(request); // recieves packet
                 String str = new String(request.getData(), 0, request.getLength()); // creates new string from recieved paclet
                 System.out.println("Client Request: " + new String(request.getData(), 0, request.getLength())); // server reads string to command line
-                for (int i = 0; i < customerList.size(); i++){ // loop to display users infomation
-                    System.out.println(customerList.get(i).toString());
-                }
-                
-                if (str.equalsIgnoreCase("1")){ // reads response from client and responds accordingly
+
+                if (str.equalsIgnoreCase("1")) { // reads response from client and responds accordingly
                     response = "Enter Client Id";
                     optionOneActive = true;
-                    
+
                 } else if (str.equalsIgnoreCase("2")) {
                     response = "Enter Client Id";
                     optionTwoActive = true;
@@ -104,7 +104,7 @@ public class UDPServer {
                 }
 
                 if (optionOneActive == true) { // commands to run if otion one is selected
-                    
+
                     for (int i = 0; i < customerList.size(); i++) { // loop to check through each client id number to see if the id number matches
                         if (str.equalsIgnoreCase(customerList.get(i).getClientId())) {
                             response = "Enter Client Pin"; // gives prompt for next section
@@ -119,23 +119,24 @@ public class UDPServer {
                         pin = Integer.parseInt(str); // sets pin variable to be able to use with sign in method
 
                         if (customerList.get(userNum).isStatus() == true) { // ensures that if client is already signed in thye cannot be signed in again
-                            response = "Error Already Signed In";
+                            response = "Error Already Signed In\n" + menuResponse;
+                            optionOneActive = false;
 
-                        } else { 
+                        } else {
 
                             signIn(user, pin);// signs client in
                             response = "Success Welcome\n" + menuResponse; // gives success repsponse and goes back to main menu
                             optionOneActive = false; // resets options so can be reactivated when nesecary
-                            if (customerList.get(userNum).getNumberOfTravels() > 5){
+                            if (customerList.get(userNum).getNumberOfTravels() > 5) {
                                 customerList.get(userNum).calculateCost();
                             }
-                                
+
                         }
                     }
-                } 
-                
+                }
+
                 if (optionTwoActive == true) { // commands to run if otion Two is selected
-                    
+
                     for (int i = 0; i < customerList.size(); i++) { // loop to check through each client id number to see if the id number matches
                         if (str.equalsIgnoreCase(customerList.get(i).getClientId())) {
                             response = "Enter Client Pin"; // gives prompt for next section
@@ -144,15 +145,17 @@ public class UDPServer {
                             found = true;
 
                         }
+                        
                     }
 
                     if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
                         pin = Integer.parseInt(str); // sets pin variable to be able to use with sign out method
 
                         if (customerList.get(userNum).isStatus() == false) { // ensures that if client is already signed out thye cannot be signed in again
-                            response = "Error Already Signed Out";
+                            response = "Error Already Signed Out\n" + menuResponse;
+                            optionTwoActive = false;
 
-                        } else { 
+                        } else {
 
                             signOut(user, pin);// signs client out
                             response = "Success Goodbye\n" + menuResponse; // gives success repsponse and goes back to main menu
@@ -161,16 +164,19 @@ public class UDPServer {
                     }
                 }
 
- 
-                    byte[] b = response.getBytes();
-                    DatagramPacket reply = new DatagramPacket(b, response.length(), request.getAddress(), request.getPort());
-                    socketA.send(reply);
-                    
-                    Arrays.fill(buffer, (byte)0);
+                byte[] b = response.getBytes(); // creates byte array for response to client
+                DatagramPacket reply = new DatagramPacket(b, response.length(), request.getAddress(), request.getPort()); // datagram constructor
+                socketA.send(reply); // sends reply to client
+
+                Arrays.fill(buffer, (byte) 0); // fills array
+
+                for (int i = 0; i < customerList.size(); i++) { // loop to display users infomation
+                    System.out.println(customerList.get(i).toString());
+                }
 
             }
 
-        } catch (SocketException e) {
+        } catch (SocketException e) { // exception handling
             System.out.println("Socket: " + e.getMessage());
 
         } catch (IOException e) {
@@ -181,7 +187,7 @@ public class UDPServer {
             }
         }
 
-        System.out.println(customerList);
+        //System.out.println(customerList);
 
     }
 
