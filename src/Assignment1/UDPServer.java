@@ -55,7 +55,14 @@ public class UDPServer {
         readCustomers(); // loads customer text file
         String response = "";
         String user = "";
-
+        int pin;
+        int userNum = 0;
+        String menuResponse = "****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ";
+        boolean optionOneActive = false;
+        boolean optionTwoActive = false;
+        
+        
+        
         Timer timer = new Timer(); // creates new timer
         WriteToFile wtf = new WriteToFile(); // creates instance of WriteToFile class
 
@@ -76,55 +83,51 @@ public class UDPServer {
                
                 if (str.equalsIgnoreCase("1")){
                     response = "Enter Client Id";
+                    optionOneActive = true;
                     
                 }else if (str.equalsIgnoreCase("2")){
-                    response = "out";
+                    response = "Enter Client Id";
+                    optionTwoActive = true;
                     
                 }else if(str.equalsIgnoreCase("3")){
                     response = "exit";
                 }
+                
                 for (int i = 0; i < customerList.size(); i++){
                         if (str.equalsIgnoreCase(customerList.get(i).getClientId())){
-                            response = "user found";
+                            response = "Enter Client Pin";
+                            user = customerList.get(i).getClientId();
+                            userNum = i; 
                             
-                        }
+                            if (i == customerList.size()){
+                                response = "Invalid Customer";
+                            }
+                        } 
+                            
+                        
                 }
-                
-                    
+                if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
+                    pin = Integer.parseInt(str);
+
+                    if (optionOneActive == true) {
+                        signIn(user, pin);
+                        response = "Success Welcome" + menuResponse;
+                        optionOneActive = false;
+                    } else if (optionTwoActive == true) {
+                        signOut(user, pin);
+                        response = "Success Goodbye" + menuResponse;
+                        optionTwoActive = false;
+
+                    }
+
+                }
+ 
                     byte[] b = response.getBytes();
                     DatagramPacket reply = new DatagramPacket(b, response.length(), request.getAddress(), request.getPort());
                     socketA.send(reply);
                     
                     Arrays.fill(buffer, (byte)0);
-                /* if (str.equalsIgnoreCase("1")) {
-                    
-                    
-                    DatagramPacket request1 = new DatagramPacket(buffer, buffer.length);
-                    socketA.receive(request1);
-                    String clientId = new String(request1.getData(), 0, request1.getLength());
-                    System.out.println("Client Request: " + new String(request1.getData(), 0, request1.getLength()));
-                    
-                    for (int i = 0; i < customerList.size(); i++){
-                        if (clientId.equalsIgnoreCase(customerList.get(i).getClientId()) );
-                        String idResponse = "enter client pin";
-                        b = idResponse.getBytes();
-                        DatagramPacket idReply = new DatagramPacket(b,idResponse.length(), request.getAddress(), request.getPort());
-                        socketA.send(idReply);
-                        
-                    }
-                    
-                    /*DatagramPacket request1 = new DatagramPacket(buffer, buffer.length);
-                    socketA.receive(request1);
-                    String rqst = new String(request.getData(), 0, request.getLength());
-                    System.out.println("Client Request 2: " + new String(request.getData(), 0, request.getLength()));
 
-                }else if (str.equalsIgnoreCase("2")){
-                    String response = "Enter bitch ID: ";
-                    byte[] b = response.getBytes();
-                    DatagramPacket reply = new DatagramPacket(b, response.length(), request.getAddress(), request.getPort());
-                    socketA.send(reply);
-                }
-*/
             }
 
         } catch (SocketException e) {
@@ -145,12 +148,20 @@ public class UDPServer {
     public static void signIn(String userId, int pinNumber){
 
         for (int i = 0; i < customerList.size(); i++){
-            if (userId.equalsIgnoreCase(customerList.get(i).getClientId()) && pinNumber ==(customerList.get(i).getPinNumber()));
+            if (userId.equalsIgnoreCase(customerList.get(i).getClientId()) && pinNumber ==(customerList.get(i).getPinNumber())){
             
             customerList.get(i).setStatus(true);
+            customerList.get(i).setNumberOfTravels(customerList.get(i).getNumberOfTravels()+1);
+            }
         }
         
-        
-
+    }
+    
+    public static void signOut(String userId, int pinNumber) {
+        for (int i = 0; i < customerList.size(); i++) {
+            if (userId.equalsIgnoreCase(customerList.get(i).getClientId()) && pinNumber == (customerList.get(i).getPinNumber())) {
+                customerList.get(i).setStatus(false);
+            }
+        }
     }
 }
