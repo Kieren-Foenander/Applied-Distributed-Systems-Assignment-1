@@ -25,6 +25,7 @@ public class UDPServer {
     public static String textFileName = "members.txt";
     public static ArrayList<Customer> customerList = new ArrayList();
     public static long interval = 120000;
+    public static String menuResponse = "****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ";
     
     //creating instance variables
   
@@ -62,7 +63,7 @@ public class UDPServer {
         String user = "";
         int pin;
         int userNum = 0;
-        String menuResponse = "****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ";
+        
         boolean optionOneActive = false;
         boolean optionTwoActive = false;
         boolean found = true;
@@ -187,10 +188,9 @@ public class UDPServer {
             }
         }
 
-        //System.out.println(customerList);
 
     }
-
+    
     public static void signIn(String userId, int pinNumber){
 
         for (int i = 0; i < customerList.size(); i++){
