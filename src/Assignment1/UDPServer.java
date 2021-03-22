@@ -66,8 +66,8 @@ public class UDPServer {
         
         boolean optionOneActive = false;
         boolean optionTwoActive = false;
-        boolean found = true;
-        boolean exists = true;
+        boolean validClient = false;
+
         
         //decalring variables required
         
@@ -112,10 +112,20 @@ public class UDPServer {
                             response = "Enter Client Pin"; // gives prompt for next section
                             user = customerList.get(i).getClientId(); // makes user variable the client id that is found
                             userNum = i; // gives specific user num to identify same user later
-                            found = true;
+                            validClient = true;
                             
-                        }                     
+                        }
                     }
+                    if (!str.equalsIgnoreCase("1") && user.equalsIgnoreCase("") && validClient == false) { 
+                    // code runs if the request is not equal to 1 to stop it from running before entering the client id, and if the user is not found by the loop the user string remains empty
+                        
+                        response = "Invalid Client ID\n" + menuResponse;
+                        optionOneActive = false;
+                        
+                        
+
+                    }
+
 
                     if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
                         pin = Integer.parseInt(str); // sets pin variable to be able to use with sign in method
@@ -129,11 +139,19 @@ public class UDPServer {
                             signIn(user, pin);// signs client in
                             response = "Success Welcome\n" + menuResponse; // gives success repsponse and goes back to main menu
                             optionOneActive = false; // resets options so can be reactivated when nesecary
+                            user = ""; // resets user string
+                            validClient = false;
                             if (customerList.get(userNum).getNumberOfTravels() > 5) {
                                 customerList.get(userNum).calculateCost();
                             }
 
                         }
+                    }else if (!str.equalsIgnoreCase("1") && !str.equalsIgnoreCase(user) && !str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber())) && validClient == true){
+                        response = "Invalid Pin\n" + menuResponse;
+                        user = ""; // resets user String
+                        validClient = false;
+                        optionOneActive = false;
+                        
                     }
                 }
 
@@ -144,10 +162,18 @@ public class UDPServer {
                             response = "Enter Client Pin"; // gives prompt for next section
                             user = customerList.get(i).getClientId(); // makes user variable the client id that is found
                             userNum = i; // gives specific user num to identify same user later
-                            found = true;
+                            validClient = true;
 
                         }
                         
+                    }
+                    if (!str.equalsIgnoreCase("2") && user.equalsIgnoreCase("") && validClient == false) { 
+                    // code runs if the request is not equal to 2 to stop it from running before entering the client id, and if the user is not found by the loop the user string remains empty
+                        
+                        response = "Invalid Client ID\n" + menuResponse;
+                        optionTwoActive = false;
+                        
+
                     }
 
                     if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
@@ -161,8 +187,16 @@ public class UDPServer {
 
                             signOut(user, pin);// signs client out
                             response = "Success Goodbye\n" + menuResponse; // gives success repsponse and goes back to main menu
+                            user = ""; // resets user string
+                            validClient = false;
                             optionTwoActive = false; // resets options so can be reactivated when nesecary
                         }
+                    }else if (!str.equalsIgnoreCase("2") && !str.equalsIgnoreCase(user) && !str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber())) && validClient == true){
+                        response = "Invalid Pin\n" + menuResponse;
+                        user = ""; // resets user string
+                        validClient = false;
+                        optionTwoActive = false;
+                        
                     }
                 }
 
@@ -199,7 +233,7 @@ public class UDPServer {
             
             customerList.get(i).setStatus(true);
             customerList.get(i).setNumberOfTravels(customerList.get(i).getNumberOfTravels()+1);
-            }
+            }   
         }
         
     }
