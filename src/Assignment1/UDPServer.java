@@ -26,7 +26,7 @@ public class UDPServer {
     public static ArrayList<Customer> customerList = new ArrayList();
     public static long interval = 120000;
     public static String menuResponse = "****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ";
-    
+    public static int userNum = 0;
     //creating instance variables
   
     
@@ -62,10 +62,6 @@ public class UDPServer {
         String response = "";
         String user = "";
         int pin = 0;
-        int userNum = 0;
-        
-        boolean optionOneActive = false;
-        boolean optionTwoActive = false;
         //decalring variables required
         
         
@@ -119,10 +115,22 @@ public class UDPServer {
                     //error responses
                     if (user.equals("")){
                         response = "Invalid User";
+                        //resets user info
+                        user = "";
+                        userNum = 0;
+                        pin = 0;
                     }else if (pin == 0){
                         response = "Invalid Pin";
+                        //resets user info
+                        user = "";
+                        userNum = 0;
+                        pin = 0;
                     }else if (customerList.get(userNum).isStatus() == true){
                         response = "User is already signed in";
+                        //resets user info
+                        user = "";
+                        userNum = 0;
+                        pin = 0;
                     }else{
                         //if no errors signs in user
                         
@@ -151,14 +159,27 @@ public class UDPServer {
                     if (Integer.parseInt(words[1]) == customerList.get(userNum).getPinNumber()){
                         // checks if pin is a match to the client 
                         pin = customerList.get(userNum).getPinNumber(); // sets pin
+                        
                     } 
                     //error responses
                     if (user.equals("")){
                         response = "Invalid User";
+                        //resets user info
+                        user = "";
+                        userNum = 0;
+                        pin = 0;
                     }else if (pin == 0){
                         response = "Invalid Pin";
+                        //resets user info
+                        user = "";
+                        userNum = 0;
+                        pin = 0;
                     }else if (customerList.get(userNum).isStatus() == false){
                         response = "User is already signed Out";
+                        //resets user info
+                        user = "";
+                        userNum = 0;
+                        pin = 0;
                     }else{
                         //if no errors signs out user
                         
@@ -169,6 +190,7 @@ public class UDPServer {
                         user = "";
                         userNum = 0;
                         pin = 0;
+                        
 
                     }
                     
@@ -207,7 +229,7 @@ public class UDPServer {
     public static void signIn(String userId, int pinNumber){
 
         for (int i = 0; i < customerList.size(); i++){
-            if (userId.equalsIgnoreCase(customerList.get(i).getClientId()) && pinNumber ==(customerList.get(i).getPinNumber())){
+            if (userId.equals(customerList.get(i).getClientId()) && pinNumber ==(customerList.get(i).getPinNumber())){
             
             customerList.get(i).setStatus(true);
             customerList.get(i).setNumberOfTravels(customerList.get(i).getNumberOfTravels()+1);
@@ -215,6 +237,7 @@ public class UDPServer {
         }
         
     }
+
     
     public static void signOut(String userId, int pinNumber) {
         for (int i = 0; i < customerList.size(); i++) {
