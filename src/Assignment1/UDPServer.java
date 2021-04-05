@@ -61,14 +61,11 @@ public class UDPServer {
         
         String response = "";
         String user = "";
-        int pin;
+        int pin = 0;
         int userNum = 0;
         
         boolean optionOneActive = false;
         boolean optionTwoActive = false;
-        boolean validClient = false;
-
-        
         //decalring variables required
         
         
@@ -90,116 +87,95 @@ public class UDPServer {
 
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length); // new packet that reads packet sent from client
                 socketA.receive(request); // recieves packet
-                String str = new String(request.getData(), 0, request.getLength()); // creates new string from recieved paclet
-                System.out.println("Client Request: " + new String(request.getData(), 0, request.getLength())); // server reads string to command line
-
-                if (str.equalsIgnoreCase("1")) { // reads response from client and responds accordingly
-                    response = "Enter Client Id";
-                    optionOneActive = true;
-
-                } else if (str.equalsIgnoreCase("2")) {
-                    response = "Enter Client Id";
-                    optionTwoActive = true;
-
-                } else if (str.equalsIgnoreCase("3")) {
-                    response = "exit";
+                String input = new String(request.getData()).trim(); // creates string for client input and trims exccess 
+                System.out.println("Client Response: "+input); // prints clients response to system
+                String [] words = input.split(" "); // creates array with clients response
+                
+/*              System.out.println(words[0]);
+                System.out.println(words[1]);
+                System.out.println(words[2]);
+*/                
+                
+                if(input.equals("exit")){
+                    response = "Good Bye";
+                    
                 }
-
-                if (optionOneActive == true) { // commands to run if otion one is selected
-
-                    for (int i = 0; i < customerList.size(); i++) { // loop to check through each client id number to see if the id number matches
-                        if (str.equalsIgnoreCase(customerList.get(i).getClientId())) {
-                            response = "Enter Client Pin"; // gives prompt for next section
-                            user = customerList.get(i).getClientId(); // makes user variable the client id that is found
-                            userNum = i; // gives specific user num to identify same user later
-                            validClient = true;
-                            
-                        }
-                    }
-                    if (!str.equalsIgnoreCase("1") && user.equalsIgnoreCase("") && validClient == false) { 
-                    // code runs if the request is not equal to 1 to stop it from running before entering the client id, and if the user is not found by the loop the user string remains empty
-                        
-                        response = "Invalid Client ID\n" + menuResponse;
-                        optionOneActive = false;
-                        
-                        
-
-                    }
-
-
-                    if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
-                        pin = Integer.parseInt(str); // sets pin variable to be able to use with sign in method
-
-                        if (customerList.get(userNum).isStatus() == true) { // ensures that if client is already signed in thye cannot be signed in again
-                            response = "Error Already Signed In\n" + menuResponse;
-                            optionOneActive = false;
-
-                        } else {
-
-                            signIn(user, pin);// signs client in
-                            response = "Success Welcome\n" + menuResponse; // gives success repsponse and goes back to main menu
-                            optionOneActive = false; // resets options so can be reactivated when nesecary
-                            user = ""; // resets user string
-                            validClient = false;
-                            if (customerList.get(userNum).getNumberOfTravels() > 5) {
-                                customerList.get(userNum).calculateCost();
-                            }
+                
+                else if(words[2].equals("In")){ //client wants to sign in
+                    
+                    //loops to search through customer list to find a match to client id
+                    for (int i = 0; i < customerList.size(); i++){
+                        if (words[0].equalsIgnoreCase(customerList.get(i).getClientId())){
+                            user = customerList.get(i).getClientId(); // sets user to client id
+                            userNum = i; // retains users spot in arraylist
 
                         }
-                    }else if (!str.equalsIgnoreCase("1") && !str.equalsIgnoreCase(user) && !str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber())) && validClient == true){
-                        response = "Invalid Pin\n" + menuResponse;
-                        user = ""; // resets user String
-                        validClient = false;
-                        optionOneActive = false;
+                    }
+                    
+                    if (Integer.parseInt(words[1]) == customerList.get(userNum).getPinNumber()){
+                        // checks if pin is a match to the client 
+                        pin = customerList.get(userNum).getPinNumber(); // sets pin
+                    } 
+                    //error responses
+                    if (user.equals("")){
+                        response = "Invalid User";
+                    }else if (pin == 0){
+                        response = "Invalid Pin";
+                    }else if (customerList.get(userNum).isStatus() == true){
+                        response = "User is already signed in";
+                    }else{
+                        //if no errors signs in user
+                        
+                        signIn(user,pin);
+                        response = "user signed in";
+                        
+                        //resets user info
+                        user = "";
+                        userNum = 0;
+                        pin = 0;
+
                         
                     }
+                    
+                }else if(words[2].equals("Out")){ //client wants to sign out
+                    
+                    //loops to search through customer list to find a match to client id
+                    for (int i = 0; i < customerList.size(); i++){
+                        if (words[0].equalsIgnoreCase(customerList.get(i).getClientId())){
+                            user = customerList.get(i).getClientId(); // sets user to client id
+                            userNum = i; // retains users spot in arraylist
+
+                        }
+                    }
+                    
+                    if (Integer.parseInt(words[1]) == customerList.get(userNum).getPinNumber()){
+                        // checks if pin is a match to the client 
+                        pin = customerList.get(userNum).getPinNumber(); // sets pin
+                    } 
+                    //error responses
+                    if (user.equals("")){
+                        response = "Invalid User";
+                    }else if (pin == 0){
+                        response = "Invalid Pin";
+                    }else if (customerList.get(userNum).isStatus() == false){
+                        response = "User is already signed Out";
+                    }else{
+                        //if no errors signs out user
+                        
+                        signOut(user,pin);
+                        response = "user signed Out";
+                        
+                        //resets user info
+                        user = "";
+                        userNum = 0;
+                        pin = 0;
+
+                    }
+                    
                 }
-
-                if (optionTwoActive == true) { // commands to run if otion Two is selected
-
-                    for (int i = 0; i < customerList.size(); i++) { // loop to check through each client id number to see if the id number matches
-                        if (str.equalsIgnoreCase(customerList.get(i).getClientId())) {
-                            response = "Enter Client Pin"; // gives prompt for next section
-                            user = customerList.get(i).getClientId(); // makes user variable the client id that is found
-                            userNum = i; // gives specific user num to identify same user later
-                            validClient = true;
-
-                        }
-                        
-                    }
-                    if (!str.equalsIgnoreCase("2") && user.equalsIgnoreCase("") && validClient == false) { 
-                    // code runs if the request is not equal to 2 to stop it from running before entering the client id, and if the user is not found by the loop the user string remains empty
-                        
-                        response = "Invalid Client ID\n" + menuResponse;
-                        optionTwoActive = false;
-                        
-
-                    }
-
-                    if (str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber()))) {
-                        pin = Integer.parseInt(str); // sets pin variable to be able to use with sign out method
-
-                        if (customerList.get(userNum).isStatus() == false) { // ensures that if client is already signed out thye cannot be signed in again
-                            response = "Error Already Signed Out\n" + menuResponse;
-                            optionTwoActive = false;
-
-                        } else {
-
-                            signOut(user, pin);// signs client out
-                            response = "Success Goodbye\n" + menuResponse; // gives success repsponse and goes back to main menu
-                            user = ""; // resets user string
-                            validClient = false;
-                            optionTwoActive = false; // resets options so can be reactivated when nesecary
-                        }
-                    }else if (!str.equalsIgnoreCase("2") && !str.equalsIgnoreCase(user) && !str.equalsIgnoreCase(String.valueOf(customerList.get(userNum).getPinNumber())) && validClient == true){
-                        response = "Invalid Pin\n" + menuResponse;
-                        user = ""; // resets user string
-                        validClient = false;
-                        optionTwoActive = false;
-                        
-                    }
-                }
-
+                
+                
+                
                 byte[] b = response.getBytes(); // creates byte array for response to client
                 DatagramPacket reply = new DatagramPacket(b, response.length(), request.getAddress(), request.getPort()); // datagram constructor
                 socketA.send(reply); // sends reply to client
@@ -209,6 +185,8 @@ public class UDPServer {
                 for (int i = 0; i < customerList.size(); i++) { // loop to display users infomation
                     System.out.println(customerList.get(i).toString());
                 }
+                
+
 
             }
 

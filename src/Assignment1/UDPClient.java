@@ -19,21 +19,44 @@ public class UDPClient {
     
     public static int serverPort = 6789;
     //public static String serverName = "serverOne";
+    public static String menuResponse = "****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ";
     
-    
-    public static void main (String [] args){
-        
-        menuResponse();
+    public static void main(String[] args) {
+
+        //menuResponse();
         DatagramSocket socketA = null;
-        
-        try{
-            while (true) {
 
-                socketA = new DatagramSocket(); // create udp socket
+        try {
 
-                Scanner scanner = new Scanner(System.in); // creates new scanner
-                
-                String msg = scanner.nextLine();
+            socketA = new DatagramSocket(); // create udp socket
+
+            Scanner scanner = new Scanner(System.in); // creates new scanner
+
+            String msg = "";
+
+            while (!msg.equalsIgnoreCase("exit")) {
+                System.out.println(menuResponse);
+                int option = scanner.nextInt();
+
+                if (option == 1) {// client wants to sign in
+                    System.out.println("Enter Client Id:");
+                    String id = scanner.next();
+                    System.out.println("Enter Pin Id:");
+                    int pin = scanner.nextInt();
+
+                    msg = id + " " + pin + " " + "In";
+                }
+                if (option == 2) { // client wants to sign out
+                    System.out.println("Enter Client Id:");
+                    String id = scanner.next();
+                    System.out.println("Enter Pin Id:");
+                    int pin = scanner.nextInt();
+
+                    msg = id + " " + pin + " " + "Out";
+                }
+                if (option == 3) { // client watns to exit
+                    msg = "exit";
+                }
 
                 // prepare message to send to server
                 byte[] bytes = msg.getBytes();
@@ -50,10 +73,12 @@ public class UDPClient {
                 //waiting for reply
                 DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
                 socketA.receive(reply);
-                
+
                 //if user types exit system will terminate
-                if (new String (reply.getData(), 0, reply.getLength()).equalsIgnoreCase("exit")){
-                    System.out.println("exit System");
+                if (new String(reply.getData(), 0, reply.getLength()).equalsIgnoreCase("Good Bye")) {
+                    System.out.println("Good Bye");
+                    msg = "exit";
+
                     break;
                 }
 
@@ -61,28 +86,21 @@ public class UDPClient {
 
             }
             socketA.close();
-            
-        }
-        catch(SocketException e){
+
+        } catch (SocketException e) {
             e.printStackTrace();
-            
-        }catch(IOException e){
+
+        } catch (IOException e) {
             e.printStackTrace();
-        
+
+        } finally {
+            if (socketA != null) {
+                socketA.close();
+            }
         }
-        finally{
-           if (socketA != null) socketA.close();
-        }
-        
-        
-        
-        
-    }
-    
-    
-    public static void menuResponse(){
-        System.out.println("****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ");
+
 
     }
+
 
 }
