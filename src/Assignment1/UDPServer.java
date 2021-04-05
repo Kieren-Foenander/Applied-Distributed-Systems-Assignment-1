@@ -137,7 +137,7 @@ public class UDPServer {
                         
                         signIn(user,pin);
                         customerList.get(userNum).calculateCost();
-                        response = "user signed in";
+                        response = "Welcome - user signed in";
                         
                         //resets user info
                         user = "";
@@ -186,7 +186,7 @@ public class UDPServer {
                         //if no errors signs out user
                         
                         signOut(user,pin);
-                        response = "user signed Out";
+                        response = "GoodBye - user signed Out";
                         
                         //resets user info
                         user = "";
