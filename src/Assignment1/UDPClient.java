@@ -74,13 +74,6 @@ public class UDPClient {
                 DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
                 socketA.receive(reply);
 
-                //if user types exit system will terminate
-                if (new String(reply.getData(), 0, reply.getLength()).equalsIgnoreCase("Good Bye")) {
-                    System.out.println("Good Bye");
-                    msg = "exit";
-
-                    break;
-                }
 
                 System.out.println("server response: " + new String(reply.getData(), 0, reply.getLength()));
 
