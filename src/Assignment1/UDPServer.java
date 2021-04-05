@@ -27,6 +27,7 @@ public class UDPServer {
     public static long interval = 120000;
     public static String menuResponse = "****** Travel Kiosk ******\n         1: IN\n         2: OUT\n         3: EXIT\nEnter: ";
     public static int userNum = 0;
+    public static Customer cust = new Customer();
     //creating instance variables
   
     
@@ -135,6 +136,7 @@ public class UDPServer {
                         //if no errors signs in user
                         
                         signIn(user,pin);
+                        customerList.get(userNum).calculateCost();
                         response = "user signed in";
                         
                         //resets user info
